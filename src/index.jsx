@@ -11,7 +11,7 @@ import { registerBlockType } from "@wordpress/blocks";
 import metadata from "./block.json";
 
 registerBlockType(metadata.name, {
-	edit: function ({ attributes, setAttributes }) {
+	edit: ({ attributes, setAttributes }) => {
 		const [questions, setQuestions] = useState([]); // Stores questions and answers
 		const [showQuestionText, setShowQuestionText] = useState(true); // State for toggling question text editor
 
@@ -19,7 +19,7 @@ registerBlockType(metadata.name, {
 
 		// Function to add a new question
 		const addQuestion = () => {
-			setQuestions([...questions, { question: "", choices: [], answer: "" }]);
+			setQuestions([...questions, { question: "", choices: [""], answer: 0 }]);
 		};
 
 		// Function to handle changes in question text
@@ -77,16 +77,14 @@ registerBlockType(metadata.name, {
 								</PanelRow>
 							</PanelBody>
 						</InspectorControls>
-						<h3>
-							{"Question"}
-							{index + 1}:
-						</h3>
+						<h3>Question {index + 1}:</h3>
 						<RichText
 							tagName="h3"
 							value={question.question}
 							allowedFormats={["core/bold", "core/italic"]}
 							onChange={(value) => handleQuestionChange(index, value)}
 							placeholder={"Enter your quiz question here..."}
+							style={{ display: showQuestionText ? "block" : "none" }}
 						/>
 						{question.choices.map((choice, choiceIndex) => (
 							<div key={choiceIndex}>
@@ -102,10 +100,7 @@ registerBlockType(metadata.name, {
 									checked={question.answer === choiceIndex}
 									onChange={() => setCorrectAnswer(index, choiceIndex)}
 								/>
-								<label>
-									{"Choice"}
-									{choiceIndex + 1}
-								</label>
+								<label>Choice {choiceIndex + 1}</label>
 							</div>
 						))}
 						<button onClick={() => addChoice(index)}>{"Add Choice"}</button>
@@ -118,29 +113,39 @@ registerBlockType(metadata.name, {
 			</div>
 		);
 	},
+	save: ({ attributes: { questions } }) => {
+		const blockProps = useBlockProps.save(); // No need to set className here
 
-	save: function ({ attributes }) {
-		const { questions } = attributes;
-		console.log(attributes, "attributes");
+		// Convert quiz data to HTML
+		const quizHtml = `
+      <h2>Quiz</h2>
+      <ul>
+        ${questions.map(
+			(question, index) =>
+				`<li key=${index}>
+            <h3>Question ${index + 1}: ${question.question}</h3>
+            <ul>
+              ${question.choices.map((choice, choiceIndex) => (
+					<li key={choiceIndex}>
+						<input
+							type="radio"
+							name="question-${index}"
+							value={`${choiceIndex}" ${question.answer === choiceIndex ? "checked" : ""
+								}`}
+						/>
+						<label for="question-${index}-${choiceIndex}">
+							${choice}
+						</label>
+					</li>
+				))}
+            </ul>
+          </li>`,
+		)}
+      </ul>
+    `;
 
 		return (
-			<div>
-				{questions.length > 0 &&
-					questions.map((question, index) => (
-						<div key={index}>
-							{/* <h3>{__('Question', 'my-plugin')}{index + 1}:</h3> */}
-							<p>{question.question}</p>
-							<ul>
-								{question.choices.map((choice, choiceIndex) => (
-									<li key={choiceIndex}>
-										{choice}
-										{question.answer === choiceIndex && <b>(Correct)</b>}
-									</li>
-								))}
-							</ul>
-						</div>
-					))}
-			</div>
+			<div {...blockProps} dangerouslySetInnerHTML={{ __html: quizHtml }} />
 		);
 	},
 });

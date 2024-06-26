@@ -29,10 +29,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_5__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_6__.name, {
-  edit: function ({
+  edit: ({
     attributes,
     setAttributes
-  }) {
+  }) => {
     const [questions, setQuestions] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]); // Stores questions and answers
     const [showQuestionText, setShowQuestionText] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true); // State for toggling question text editor
 
@@ -42,8 +42,8 @@ __webpack_require__.r(__webpack_exports__);
     const addQuestion = () => {
       setQuestions([...questions, {
         question: "",
-        choices: [],
-        answer: ""
+        choices: [""],
+        answer: 0
       }]);
     };
 
@@ -98,12 +98,15 @@ __webpack_require__.r(__webpack_exports__);
       label: "Show Question Text Editor",
       checked: showQuestionText,
       onChange: () => setShowQuestionText(!showQuestionText)
-    })))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Question", index + 1, ":"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText, {
+    })))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Question ", index + 1, ":"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText, {
       tagName: "h3",
       value: question.question,
       allowedFormats: ["core/bold", "core/italic"],
       onChange: value => handleQuestionChange(index, value),
-      placeholder: "Enter your quiz question here..."
+      placeholder: "Enter your quiz question here...",
+      style: {
+        display: showQuestionText ? "block" : "none"
+      }
     }), question.choices.map((choice, choiceIndex) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       key: choiceIndex
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("input", {
@@ -114,7 +117,7 @@ __webpack_require__.r(__webpack_exports__);
       type: "radio",
       checked: question.answer === choiceIndex,
       onChange: () => setCorrectAnswer(index, choiceIndex)
-    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", null, "Choice", choiceIndex + 1))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", null, "Choice ", choiceIndex + 1))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
       onClick: () => addChoice(index)
     }, "Add Choice"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
       onClick: () => removeQuestion(index)
@@ -122,18 +125,39 @@ __webpack_require__.r(__webpack_exports__);
       onClick: addQuestion
     }, "Add Question"));
   },
-  save: function ({
-    attributes
-  }) {
-    const {
+  save: ({
+    attributes: {
       questions
-    } = attributes;
-    console.log(attributes, "attributes");
-    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, questions.length > 0 && questions.map((question, index) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      key: index
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, question.question), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("ul", null, question.choices.map((choice, choiceIndex) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("li", {
+    }
+  }) => {
+    const blockProps = _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps.save(); // No need to set className here
+
+    // Convert quiz data to HTML
+    const quizHtml = `
+      <h2>Quiz</h2>
+      <ul>
+        ${questions.map((question, index) => `<li key=${index}>
+            <h3>Question ${index + 1}: ${question.question}</h3>
+            <ul>
+              ${question.choices.map((choice, choiceIndex) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("li", {
       key: choiceIndex
-    }, choice, question.answer === choiceIndex && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("b", null, "(Correct)")))))));
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("input", {
+      type: "radio",
+      name: "question-${index}",
+      value: `${choiceIndex}" ${question.answer === choiceIndex ? "checked" : ""}`
+    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", {
+      for: "question-${index}-${choiceIndex}"
+    }, "$", choice)))}
+            </ul>
+          </li>`)}
+      </ul>
+    `;
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      ...blockProps,
+      dangerouslySetInnerHTML: {
+        __html: quizHtml
+      }
+    });
   }
 });
 
@@ -209,7 +233,7 @@ module.exports = window["wp"]["components"];
   \************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/wp-quiz-block","version":"0.1.0","title":"Wp Quiz Block","category":"widgets","icon":"smiley","description":"Example block scaffolded with Create Block tool.","example":{},"supports":{"html":false},"textdomain":"wp-quiz-block","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/wp-quiz-block","version":"0.1.0","title":"Wp Quiz Block","category":"widgets","icon":"smiley","description":"Example block scaffolded with Create Block tool.","example":{},"supports":{"html":false},"textdomain":"wp-quiz-block","editorScript":"file:./index.jsx","editorStyle":"file:./index.css","style":"file:./style-index.css"}');
 
 /***/ })
 
