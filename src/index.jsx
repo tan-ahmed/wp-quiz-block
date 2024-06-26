@@ -1,151 +1,119 @@
-import React, { useState, useEffect } from "react";
-import {
-	useBlockProps,
-	RichText,
-	InspectorControls,
-} from "@wordpress/block-editor";
-import { PanelBody, PanelRow, ToggleControl } from "@wordpress/components";
-import "./style.scss";
-import "./editor.scss"; // Import your stylesheet (optional)
-import { registerBlockType } from "@wordpress/blocks";
-import metadata from "./block.json";
+import { registerBlockType } from '@wordpress/blocks';
+import { __ } from '@wordpress/i18n';
+import { TextControl, Button } from '@wordpress/components';
+import { useState } from '@wordpress/element';
+import { InspectorControls } from '@wordpress/block-editor';
 
-registerBlockType(metadata.name, {
-	edit: ({ attributes, setAttributes }) => {
-		const [questions, setQuestions] = useState([]); // Stores questions and answers
-		const [showQuestionText, setShowQuestionText] = useState(true); // State for toggling question text editor
+const QuizBlock = ({ attributes, setAttributes }) => {
+	const [questions, setQuestions] = useState(attributes.questions || []);
 
-		const blockProps = useBlockProps();
-
-		// Function to add a new question
-		const addQuestion = () => {
-			setQuestions([...questions, { question: "", choices: [""], answer: 0 }]);
+	const addQuestion = () => {
+		const newQuestion = {
+			questionText: "",
+			answerOptions: [
+				{ answerText: "", isCorrect: false },
+				{ answerText: "", isCorrect: false },
+				{ answerText: "", isCorrect: false },
+				{ answerText: "", isCorrect: false }
+			]
 		};
+		setQuestions([...questions, newQuestion]);
+		setAttributes({ questions: [...questions, newQuestion] });
+	};
 
-		// Function to handle changes in question text
-		const handleQuestionChange = (index, value) => {
-			const newQuestions = [...questions];
-			newQuestions[index].question = value;
-			setQuestions(newQuestions);
-		};
+	const updateQuestionText = (index, newText) => {
+		const updatedQuestions = [...questions];
+		updatedQuestions[index].questionText = newText;
+		setQuestions(updatedQuestions);
+		setAttributes({ questions: updatedQuestions });
+	};
 
-		// Function to add a new answer choice
-		const addChoice = (questionIndex) => {
-			const newQuestions = [...questions];
-			newQuestions[questionIndex].choices.push("");
-			setQuestions(newQuestions);
-		};
+	const updateAnswerText = (questionIndex, answerIndex, newText) => {
+		const updatedQuestions = [...questions];
+		updatedQuestions[questionIndex].answerOptions[answerIndex].answerText = newText;
+		setQuestions(updatedQuestions);
+		setAttributes({ questions: updatedQuestions });
+	};
 
-		// Function to handle changes in answer choice text
-		const handleChoiceChange = (questionIndex, choiceIndex, value) => {
-			const newQuestions = [...questions];
-			newQuestions[questionIndex].choices[choiceIndex] = value;
-			setQuestions(newQuestions);
-		};
+	const updateCorrectAnswer = (questionIndex, correctIndex) => {
+		const updatedQuestions = [...questions];
+		updatedQuestions[questionIndex].answerOptions.forEach((answer, index) => {
+			answer.isCorrect = index === correctIndex;
+		});
+		setQuestions(updatedQuestions);
+		setAttributes({ questions: updatedQuestions });
+	};
 
-		// Function to set the correct answer for a question
-		const setCorrectAnswer = (questionIndex, choiceIndex) => {
-			const newQuestions = [...questions];
-			newQuestions[questionIndex].answer = choiceIndex;
-			setQuestions(newQuestions);
-		};
-
-		// Function to remove a question
-		const removeQuestion = (index) => {
-			const newQuestions = [...questions];
-			newQuestions.splice(index, 1);
-			setQuestions(newQuestions);
-		};
-
-		// Save quiz data to block attributes
-		useEffect(() => {
-			setAttributes({ questions });
-		}, [questions, setAttributes]);
-
-		return (
-			<div {...blockProps}>
-				{questions.map((question, index) => (
-					<div key={index}>
-						<InspectorControls>
-							<PanelBody title={"Quiz Settings"}>
-								<PanelRow>
-									<ToggleControl
-										label={"Show Question Text Editor"}
-										checked={showQuestionText}
-										onChange={() => setShowQuestionText(!showQuestionText)}
-									/>
-								</PanelRow>
-							</PanelBody>
-						</InspectorControls>
-						<h3>Question {index + 1}:</h3>
-						<RichText
-							tagName="h3"
-							value={question.question}
-							allowedFormats={["core/bold", "core/italic"]}
-							onChange={(value) => handleQuestionChange(index, value)}
-							placeholder={"Enter your quiz question here..."}
-							style={{ display: showQuestionText ? "block" : "none" }}
+	return (
+		<>
+			<InspectorControls>
+				<div>
+					<Button onClick={addQuestion}>Add Question</Button>
+				</div>
+			</InspectorControls>
+			<div className="quiz-block">
+				{questions.map((question, questionIndex) => (
+					<div key={questionIndex} className="question">
+						<TextControl
+							value={question.questionText}
+							onChange={(newText) => updateQuestionText(questionIndex, newText)}
+							placeholder="Enter question text"
 						/>
-						{question.choices.map((choice, choiceIndex) => (
-							<div key={choiceIndex}>
-								<input
-									type="text"
-									value={choice}
-									onChange={(e) =>
-										handleChoiceChange(index, choiceIndex, e.target.value)
-									}
-								/>
-								<input
-									type="radio"
-									checked={question.answer === choiceIndex}
-									onChange={() => setCorrectAnswer(index, choiceIndex)}
-								/>
-								<label>Choice {choiceIndex + 1}</label>
-							</div>
-						))}
-						<button onClick={() => addChoice(index)}>{"Add Choice"}</button>
-						<button onClick={() => removeQuestion(index)}>
-							{"Remove Question"}
-						</button>
+						<ul className="answer-options">
+							{question.answerOptions.map((answerOption, answerIndex) => (
+								<li key={answerIndex}>
+									<TextControl
+										value={answerOption.answerText}
+										onChange={(newText) => updateAnswerText(questionIndex, answerIndex, newText)}
+										placeholder={`Enter answer option ${answerIndex + 1}`}
+									/>
+									<input
+										type="radio"
+										checked={answerOption.isCorrect}
+										onChange={() => updateCorrectAnswer(questionIndex, answerIndex)}
+									/>
+									Correct
+								</li>
+							))}
+						</ul>
 					</div>
 				))}
-				<button onClick={addQuestion}>{"Add Question"}</button>
 			</div>
-		);
-	},
-	save: ({ attributes: { questions } }) => {
-		const blockProps = useBlockProps.save(); // No need to set className here
+		</>
+	);
+};
 
-		// Convert quiz data to HTML
-		const quizHtml = `
-      <h2>Quiz</h2>
-      <ul>
-        ${questions.map(
-			(question, index) =>
-				`<li key=${index}>
-            <h3>Question ${index + 1}: ${question.question}</h3>
-            <ul>
-              ${question.choices.map((choice, choiceIndex) => (
-					<li key={choiceIndex}>
-						<input
-							type="radio"
-							name="question-${index}"
-							value={`${choiceIndex}" ${question.answer === choiceIndex ? "checked" : ""
-								}`}
-						/>
-						<label for="question-${index}-${choiceIndex}">
-							${choice}
-						</label>
-					</li>
-				))}
-            </ul>
-          </li>`,
-		)}
-      </ul>
-    `;
+registerBlockType('namespace/quiz-block', {
+	title: __('Quiz Block', 'namespace'),
+	description: __('Block for creating a quiz with multiple questions and answers.', 'namespace'),
+	icon: 'editor-quiz',
+	category: 'common',
+	attributes: {
+		questions: {
+			type: 'array',
+			default: []
+		}
+	},
+	edit: QuizBlock,
+	save: ({ attributes }) => {
+		const { questions } = attributes;
 
 		return (
-			<div {...blockProps} dangerouslySetInnerHTML={{ __html: quizHtml }} />
+			<div className="quiz-block" data={JSON.stringify(questions)}>
+				{questions.map((question, questionIndex) => (
+					<div key={questionIndex} className="question">
+						<h3>{question.questionText}</h3>
+						<ul className="answer-options">
+							{question.answerOptions.map((answerOption, answerIndex) => (
+								<li key={answerIndex}>
+									{answerOption.isCorrect && <strong>{answerOption.answerText}</strong>}
+									{!answerOption.isCorrect && answerOption.answerText}
+								</li>
+							))}
+						</ul>
+					</div>
+				))}
+			</div>
 		);
 	},
 });
