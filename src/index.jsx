@@ -22,6 +22,13 @@ const QuizBlock = ({ attributes, setAttributes }) => {
 		setAttributes({ questions: [...questions, newQuestion] });
 	};
 
+	const removeQuestion = (index) => {
+		const updatedQuestions = [...questions];
+		updatedQuestions.splice(index, 1); // Remove the question at index
+		setQuestions(updatedQuestions);
+		setAttributes({ questions: updatedQuestions });
+	};
+
 	const updateQuestionText = (index, newText) => {
 		const updatedQuestions = [...questions];
 		updatedQuestions[index].questionText = newText;
@@ -55,6 +62,7 @@ const QuizBlock = ({ attributes, setAttributes }) => {
 			<div className="quiz-block">
 				{questions.map((question, questionIndex) => (
 					<div key={questionIndex} className="question">
+						<Button onClick={() => removeQuestion(questionIndex)}>Remove Question</Button>
 						<TextControl
 							value={question.questionText}
 							onChange={(newText) => updateQuestionText(questionIndex, newText)}

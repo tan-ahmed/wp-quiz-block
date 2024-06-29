@@ -194,6 +194,14 @@ const QuizBlock = ({
       questions: [...questions, newQuestion]
     });
   };
+  const removeQuestion = index => {
+    const updatedQuestions = [...questions];
+    updatedQuestions.splice(index, 1); // Remove the question at index
+    setQuestions(updatedQuestions);
+    setAttributes({
+      questions: updatedQuestions
+    });
+  };
   const updateQuestionText = (index, newText) => {
     const updatedQuestions = [...questions];
     updatedQuestions[index].questionText = newText;
@@ -227,7 +235,9 @@ const QuizBlock = ({
   }, questions.map((question, questionIndex) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     key: questionIndex,
     className: "question"
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.TextControl, {
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
+    onClick: () => removeQuestion(questionIndex)
+  }, "Remove Question"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.TextControl, {
     value: question.questionText,
     onChange: newText => updateQuestionText(questionIndex, newText),
     placeholder: "Enter question text"
