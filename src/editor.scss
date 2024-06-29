@@ -7,3 +7,21 @@
 .wp-block-create-block-wp-quiz-block {
 	border: 1px dotted #f00;
 }
+
+.answer-options {
+	list-style: none !important;
+	padding: 0 !important;
+
+
+}
+
+.answer-options li {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	gap: 10px;
+
+	.components-base-control {
+		width: 75%;
+	}
+}

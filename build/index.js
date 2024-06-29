@@ -2,6 +2,18 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/editor.scss":
+/*!*************************!*\
+  !*** ./src/editor.scss ***!
+  \*************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "react":
 /*!************************!*\
   !*** external "React" ***!
@@ -147,6 +159,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _editor_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./editor.scss */ "./src/editor.scss");
+
 
 
 
@@ -221,15 +235,15 @@ const QuizBlock = ({
     className: "answer-options"
   }, question.answerOptions.map((answerOption, answerIndex) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("li", {
     key: answerIndex
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.TextControl, {
-    value: answerOption.answerText,
-    onChange: newText => updateAnswerText(questionIndex, answerIndex, newText),
-    placeholder: `Enter answer option ${answerIndex + 1}`
-  }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("input", {
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("input", {
     type: "radio",
     checked: answerOption.isCorrect,
     onChange: () => updateCorrectAnswer(questionIndex, answerIndex)
-  }), "Correct")))))));
+  }), "Correct", (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.TextControl, {
+    value: answerOption.answerText,
+    onChange: newText => updateAnswerText(questionIndex, answerIndex, newText),
+    placeholder: `Enter answer option ${answerIndex + 1}`
+  }))))))));
 };
 (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__.registerBlockType)('namespace/quiz-block', {
   title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Quiz Block', 'namespace'),

@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { TextControl, Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/block-editor';
+import './editor.scss';
 
 const QuizBlock = ({ attributes, setAttributes }) => {
 	const [questions, setQuestions] = useState(attributes.questions || []);
@@ -62,17 +63,18 @@ const QuizBlock = ({ attributes, setAttributes }) => {
 						<ul className="answer-options">
 							{question.answerOptions.map((answerOption, answerIndex) => (
 								<li key={answerIndex}>
-									<TextControl
-										value={answerOption.answerText}
-										onChange={(newText) => updateAnswerText(questionIndex, answerIndex, newText)}
-										placeholder={`Enter answer option ${answerIndex + 1}`}
-									/>
 									<input
 										type="radio"
 										checked={answerOption.isCorrect}
 										onChange={() => updateCorrectAnswer(questionIndex, answerIndex)}
 									/>
 									Correct
+									<TextControl
+										value={answerOption.answerText}
+										onChange={(newText) => updateAnswerText(questionIndex, answerIndex, newText)}
+										placeholder={`Enter answer option ${answerIndex + 1}`}
+									/>
+
 								</li>
 							))}
 						</ul>
