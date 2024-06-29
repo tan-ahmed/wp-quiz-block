@@ -248,7 +248,7 @@ const QuizBlock = ({
 (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__.registerBlockType)('namespace/quiz-block', {
   title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Quiz Block', 'namespace'),
   description: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Block for creating a quiz with multiple questions and answers.', 'namespace'),
-  icon: 'editor-quiz',
+  icon: 'smiley',
   category: 'common',
   attributes: {
     questions: {

@@ -88,7 +88,7 @@ const QuizBlock = ({ attributes, setAttributes }) => {
 registerBlockType('namespace/quiz-block', {
 	title: __('Quiz Block', 'namespace'),
 	description: __('Block for creating a quiz with multiple questions and answers.', 'namespace'),
-	icon: 'editor-quiz',
+	icon: 'smiley',
 	category: 'common',
 	attributes: {
 		questions: {
