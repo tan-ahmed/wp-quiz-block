@@ -96,26 +96,15 @@ registerBlockType('namespace/quiz-block', {
 			default: []
 		}
 	},
+	supports: {
+		// Disable support for rendering on frontend
+		html: false,
+	},
 	edit: QuizBlock,
 	save: ({ attributes }) => {
 		const { questions } = attributes;
-
 		return (
-			<div className="quiz-block" data={JSON.stringify(questions)}>
-				{questions.map((question, questionIndex) => (
-					<div key={questionIndex} className="question">
-						<h3>{question.questionText}</h3>
-						<ul className="answer-options">
-							{question.answerOptions.map((answerOption, answerIndex) => (
-								<li key={answerIndex}>
-									{answerOption.isCorrect && <strong>{answerOption.answerText}</strong>}
-									{!answerOption.isCorrect && answerOption.answerText}
-								</li>
-							))}
-						</ul>
-					</div>
-				))}
-			</div>
+			<div className="quiz-block" data={JSON.stringify(questions)}></div>
 		);
 	},
 });

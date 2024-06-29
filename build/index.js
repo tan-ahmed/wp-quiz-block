@@ -256,6 +256,10 @@ const QuizBlock = ({
       default: []
     }
   },
+  supports: {
+    // Disable support for rendering on frontend
+    html: false
+  },
   edit: QuizBlock,
   save: ({
     attributes
@@ -266,14 +270,7 @@ const QuizBlock = ({
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "quiz-block",
       data: JSON.stringify(questions)
-    }, questions.map((question, questionIndex) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      key: questionIndex,
-      className: "question"
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, question.questionText), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("ul", {
-      className: "answer-options"
-    }, question.answerOptions.map((answerOption, answerIndex) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("li", {
-      key: answerIndex
-    }, answerOption.isCorrect && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("strong", null, answerOption.answerText), !answerOption.isCorrect && answerOption.answerText))))));
+    });
   }
 });
 /******/ })()
